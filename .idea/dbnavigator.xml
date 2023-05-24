@@ -32,11 +32,7 @@
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="715164a7-29c0-4224-80b2-5f46150fd280" object-ref="schemas/public/tables/app_user" />
-      <object connection-id="715164a7-29c0-4224-80b2-5f46150fd280" object-ref="schemas/public/tables/app_conversation" />
-      <object connection-id="715164a7-29c0-4224-80b2-5f46150fd280" object-ref="schemas/public/tables/app_message" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="715164a7-29c0-4224-80b2-5f46150fd280" />
@@ -49,6 +45,7 @@
     </filter-actions>
     <filter-actions connection-id="715164a7-29c0-4224-80b2-5f46150fd280" dataset="public.app_conversation" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="715164a7-29c0-4224-80b2-5f46150fd280" dataset="public.app_user" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="715164a7-29c0-4224-80b2-5f46150fd280" dataset="public.app_room" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="715164a7-29c0-4224-80b2-5f46150fd280" dataset="public.app_conversation_participants" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">

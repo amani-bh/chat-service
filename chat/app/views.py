@@ -1,9 +1,13 @@
 from django.db.models import Q
-from rest_framework import generics, status
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer, UserSerializer
+from rest_framework import serializers, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 
 @api_view(['POST'])
 def add_conversation(request):
@@ -70,8 +74,6 @@ def all_conversations(request, user_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-
-
 @api_view(['GET'])
 def all_messages(request, id,idUser):
     try:
@@ -96,3 +98,54 @@ def get_conversation(request, id):
         return Response(serializer.data)
     except Conversation.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+###################################################################
+###################################################################
+class StartCallSerializer(serializers.Serializer):
+    receiver = serializers.SlugField()
+    sender = serializers.SlugField()
+    peer_id = serializers.CharField()
+
+
+class StartCall(APIView):
+
+    def post(self, request, format=None):
+        serializer = StartCallSerializer(data=request.data)
+        if serializer.is_valid():
+            sender_user = User.objects.get(user_id=serializer.validated_data['sender'])
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'chat_%s' % serializer.validated_data['receiver'], {
+                    'type': 'new_call',
+                    'message': {
+                        'data': serializer.validated_data,
+                        'display': UserSerializer(sender_user, context={'request': request}).data
+                    }
+                }
+            )
+            print('all good')
+            return Response({'hello': 'world'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JoinCallSerializer(serializers.Serializer):
+    peer_js = serializers.CharField()
+
+
+class EndCall(APIView):
+
+    def post(self, request, format=None):
+        serializer = JoinCallSerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'chat_%s' % serializer.validated_data['peer_js'], {  # Use 'peer_js' instead of 'peer_id'
+                    'type': 'end_call',
+                    'message': {
+                        'data': serializer.validated_data,
+                    }
+                }
+            )
+            return Response({'hello': 'world'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
