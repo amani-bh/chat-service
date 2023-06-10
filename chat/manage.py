@@ -2,7 +2,15 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import py_eureka_client.eureka_client as eureka_client
 
+def eureka_init():
+    eureka_client.init(
+        eureka_server="http://localhost:8761",
+        app_name="chat-service",
+        instance_host="localhost",
+        instance_port=8000,
+    )
 
 def main():
     """Run administrative tasks."""
@@ -19,4 +27,5 @@ def main():
 
 
 if __name__ == '__main__':
+    eureka_init()
     main()
