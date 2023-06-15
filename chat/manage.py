@@ -27,5 +27,5 @@ def main():
 
 
 if __name__ == '__main__':
-    eureka_init()
     main()
+    eureka_init()
